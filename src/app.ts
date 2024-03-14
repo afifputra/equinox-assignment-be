@@ -5,6 +5,7 @@ import helmet from "helmet";
 import cors from "cors";
 
 import CarRoute from "./routes/car";
+import OrderRoute from "./routes/order";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get("/", (_: Request, res: Response) => {
 });
 
 app.use("/cars", CarRoute);
+app.use("/orders", OrderRoute);
 
 server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

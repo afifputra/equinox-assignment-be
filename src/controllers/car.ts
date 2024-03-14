@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
-import Car from "../models/car";
 import { isEmpty } from "lodash";
+
+import { createCarSchema, updateCarSchema } from "../config/validation";
+import Car from "../models/car";
+import { handleErrorFromYup } from "../utils/commons";
 
 const getCar = async (_: Request, res: Response) => {
   try {
@@ -38,6 +41,7 @@ const getCarById = async (req: Request, res: Response) => {
 
 const createCar = async (req: Request, res: Response) => {
   try {
+    await createCarSchema.validate(req.body, { abortEarly: false });
     await Car.create(req.body);
 
     return res.status(201).json({
@@ -45,12 +49,14 @@ const createCar = async (req: Request, res: Response) => {
       message: "Car created successfully",
     });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    const generatedError = handleErrorFromYup(error);
+    return res.status(500).json(generatedError);
   }
 };
 
 const updateCar = async (req: Request, res: Response) => {
   try {
+    await updateCarSchema.validate(req.body, { abortEarly: false });
     const car = await Car.findByPk(req.params.id);
 
     if (isEmpty(car)) {
@@ -68,7 +74,8 @@ const updateCar = async (req: Request, res: Response) => {
       data: car,
     });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    const generatedError = handleErrorFromYup(error);
+    return res.status(500).json(generatedError);
   }
 };
 

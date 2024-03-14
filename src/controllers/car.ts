@@ -3,6 +3,7 @@ import { isEmpty } from "lodash";
 
 import { createCarSchema, updateCarSchema } from "../config/validation";
 import Car from "../models/car";
+import Order from "../models/order";
 import { handleErrorFromYup } from "../utils/commons";
 
 const getCar = async (_: Request, res: Response) => {
@@ -87,6 +88,17 @@ const deleteCar = async (req: Request, res: Response) => {
       return res.status(404).json({
         status: "error",
         message: "Car not found",
+      });
+    }
+
+    // check if the car has been ordered
+    // if it has been ordered, try to delete it
+    // if it has not been ordered, just delete it
+    const order = await Order.findAll({ where: { car_id: req.params.id } });
+
+    if (!isEmpty(order)) {
+      order.forEach(async (item) => {
+        await item.destroy();
       });
     }
 

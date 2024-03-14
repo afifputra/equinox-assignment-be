@@ -19,6 +19,7 @@ Order.init(
       type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: false,
+      autoIncrement: true,
     },
     car_id: {
       type: DataTypes.INTEGER,

@@ -8,6 +8,14 @@ import { handleErrorFromYup } from "../utils/commons";
 const getOrders = async (_: Request, res: Response) => {
   try {
     const orders = await Order.findAll();
+
+    if (isEmpty(orders)) {
+      return res.status(404).json({
+        status: "error",
+        message: "No orders found",
+      });
+    }
+
     return res.status(200).json({
       status: "success",
       message: "Orders retrieved successfully",
@@ -50,7 +58,7 @@ const createOrder = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     const generatedError = handleErrorFromYup(error);
-    res.status(500).json(generatedError);
+    return res.status(500).json(generatedError);
   }
 };
 
@@ -74,7 +82,7 @@ const updateOrder = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     const generatedError = handleErrorFromYup(error);
-    res.status(500).json(generatedError);
+    return res.status(500).json(generatedError);
   }
 };
 

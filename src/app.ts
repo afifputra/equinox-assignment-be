@@ -1,11 +1,15 @@
 import express, { Request, Response } from "express";
+import * as http from "http";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 
+import CarRoute from "./routes/car";
+
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT ?? 3000;
 
 app.use(express.json());
@@ -16,6 +20,8 @@ app.get("/", (_: Request, res: Response) => {
   res.json({ message: "This is me" });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.use("/cars", CarRoute);
+
+server.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
